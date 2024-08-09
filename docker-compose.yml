@@ -1,0 +1,25 @@
+version: '3'
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: projectfm
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db.sql:/docker-entrypoint-initdb.d/init.sql
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://postgres:1234@db:5432/projectfm
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
